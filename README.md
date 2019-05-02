@@ -6,20 +6,20 @@ Offers a stable ability hard-code special cases tied to IDs in your database, fr
 ## To use in your project
 Copy the /DatabaseEnums folder into your project and apply the following customization:
 
-1. Settings.include.tt
+__1. Settings.include.tt__
   - Edit connectionString
   - Edit tableInfoList to include desired enums
 
-2. dblookup.bat
+__2. dblookup.bat__
   - Edit the relative folder paths in dblookup.bat
   - If your installation of VisualStudio differs: Edit the TextTransform.exe absolute path
 
-3. If using npm:
+__3. If using npm:__
   - Add the package.json script: "scripts": { "dblookup": "dblookup.bat" }
   - Move the dblookup.bat file into the same folder as package.json
   - Remember to reset all relative paths of dblookup.bat
 
-3. General Notes:
+__3. General Notes:__
   - In dblookup.bat: %~dp0 = path to the folder of the dblookup.bat
   - Run dblookup.bat to execute the .tt files generation and copy the output files to your desired locations
   - Debuging of the .tt files is possible if opening them in Visual Studio
