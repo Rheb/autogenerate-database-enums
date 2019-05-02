@@ -1,7 +1,7 @@
 # autogenerate-database-enums
 Autogenerates enums from database (.NET). Maps selected db-tables to ID / KeyName pairs in C# enums as well as js objects.
 
-Offers a stable ability hard-code special cases tied to IDs in your database, frontend and backend. View the /Examples folder to see how database tables are mapped to generated .js and .cs files.
+Offers a stable solution for hard-coding special cases tied to IDs in your database, frontend and backend. View the /Examples folder to see how database tables are mapped to generated .js and .cs files.
 
 ## To use in your project
 Copy the /DatabaseEnums folder into your project and apply the following customization:
