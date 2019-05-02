@@ -1,0 +1,71 @@
+﻿<#@ assembly name="System.Data" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Data" #>
+<#@ import namespace="System.Data.SqlClient" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Text.RegularExpressions" #>
+<#@ import namespace="System.Linq" #>
+<#@ include file="Settings.include.tt" #><##>
+<#
+    SqlConnection connection = new SqlConnection(connectionString);
+
+    // Loop thorugh all tables and store values
+    Dictionary<string, EnumInfo> enumDict = new Dictionary<string, EnumInfo>();
+
+    foreach (var info in tableInfoList)
+    {
+        // Connect to current table and loop through all rows via a reader
+        string commandString = $"select {info.ID_Column}, {info.KeyName_Column}, {info.DisplayName_Column} from {info.TableName} order by {info.ID_Column}";
+        SqlCommand command = new SqlCommand(commandString, connection);
+
+        connection.Open();
+
+        SqlDataReader reader = command.ExecuteReader();
+        bool loop = reader.Read();
+
+        List<RowInfo> rows = new List<RowInfo>();
+
+        while (loop)
+        {
+            rows.Add(new RowInfo
+            {
+                ID = reader[info.ID_Column].ToString(),
+                KeyName = Pascalize(reader[info.KeyName_Column].ToString()),
+                DisplayName = reader[info.DisplayName_Column].ToString(),
+            });
+
+            loop = reader.Read();
+        }
+
+        enumDict.Add(
+            info.OutputEnumName,
+            new EnumInfo
+            {
+                HeaderInfo = info,
+                RowInfoList = rows,
+            }
+        );
+
+        connection.Close();
+    }
+
+    List<string> enumNames = enumDict.Keys.OrderBy(name => name).ToList();
+#>
+<#+
+    public class EnumInfo
+    {
+        public TableHeaderInfo HeaderInfo;
+        public List<RowInfo> RowInfoList;
+    }
+    public class RowInfo
+    {
+        public string ID;
+        public string KeyName;
+        public string DisplayName;
+    }
+    public string Pascalize(object value)
+    {
+        Regex rx = new Regex(@"(?:[^a-zA-Z0-9]*)(?<first>[a-zA-Z0-9])(?<reminder>[a-zA-Z0-9]*)(?:[^a-zA-Z0-9]*)");
+        return rx.Replace(value.ToString(), m => m.Groups["first"].ToString().ToUpper() + m.Groups["reminder"].ToString());
+    }
+#>

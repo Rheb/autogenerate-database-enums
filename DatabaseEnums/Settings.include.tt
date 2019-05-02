@@ -1,0 +1,40 @@
+<#@ import namespace="System.Collections.Generic" #>
+<#
+    string connectionString = @"
+        Data Source=[MyServerUrl];
+        Initial Catalog=[MyDatabaseName];
+        User ID=[MyUsername];
+        Password=[MyPassword];
+        Integrated Security=False; Persist Security Info=True; MultipleActiveResultSets=True
+    ";
+    
+    List<TableHeaderInfo> tableInfoList = new List<TableHeaderInfo>
+    {
+        new TableHeaderInfo
+        {
+            OutputEnumName = "AssignmentStatusType",
+            TableName = "dbo.AssignmentStatus",
+            ID_Column = "AssignmentStatusID",
+            KeyName_Column = "Name",
+            DisplayName_Column = "Description",
+        },
+        new TableHeaderInfo
+        {
+            OutputEnumName = "TextType",
+            TableName = "dbo.FormTextType",
+            ID_Column = "ID",
+            KeyName_Column = "Type",
+            DisplayName_Column = "DisplayAs",
+        },
+    };
+#>
+<#+
+    public class TableHeaderInfo
+    {
+        public string OutputEnumName;
+        public string TableName;
+        public string ID_Column;
+        public string KeyName_Column;
+        public string DisplayName_Column;
+    }
+#>

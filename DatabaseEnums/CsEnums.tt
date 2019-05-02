@@ -1,0 +1,97 @@
+﻿<#@ template debug="true" hostSpecific="true" #>
+<#@ output extension="gen.cs" #>
+<#@ include file="Core.include.tt" #><##>
+using System.CodeDom.Compiler;
+
+namespace Business.DatabaseEnums
+{
+<#
+    // Loop thorugh all tables to create enums
+	for (int i = 0; i < enumNames.Count; i++)
+    {
+        string name = enumNames[i];
+        TableHeaderInfo header = enumDict[name].HeaderInfo;
+        List<RowInfo> rows = enumDict[name].RowInfoList;
+#>
+    #region <#= name #> (Table: <#= header.TableName #>)
+
+    /// <summary>
+    /// Auto generated enum from table: <#= header.TableName #> |
+    /// To update enum from DB, use: npm run dblookup
+    /// </summary>
+    [GeneratedCode("TextTemplatingFileGenerator", "10")]
+    public enum <#= name #>
+    {
+<#
+        // Loop through all rows in this lookup table
+        for (int j = 0; j < rows.Count; j++)
+        {
+            bool isLastRow = j == rows.Count - 1;
+            string id = rows[j].ID;
+            string keyName = rows[j].KeyName;
+            string displayName = rows[j].DisplayName;
+#>        /// <summary>
+        /// DisplaName: <#= displayName #>
+        /// </summary>
+        <#= keyName #> = <#= id #><#= isLastRow ? string.Empty : ",\r\n" #>
+<#
+        }
+#>    }
+
+    #endregion
+
+<#
+    }
+#>
+    #region Extension Methods
+
+    /// <summary>
+    /// Extension Methods for auto generated enums from DB
+    /// </summary>
+    [GeneratedCode("TextTemplatingFileGenerator", "10")]
+    public static class GeneratedEnumExtensions
+    {
+<#
+    // Loop thorugh all tables to create extension methods
+    for (int i = 0; i < enumNames.Count; i++)
+    {
+        bool isLastEnum = (i == enumNames.Count - 1);
+        string name = enumNames[i];
+        TableHeaderInfo header = enumDict[name].HeaderInfo;
+        List<RowInfo> rows = enumDict[name].RowInfoList;
+#>
+        public static string GetDisplayName(this <#= name #> p_eKey)
+        {
+            switch (p_eKey)
+            {
+<#
+
+        // Loop through all rows in this lookup table
+        for (int j = 0; j < rows.Count; j++)
+        {
+            bool isLastRow = j == rows.Count - 1;
+            string id = rows[j].ID;
+            string keyName = rows[j].KeyName;
+            string displayName = rows[j].DisplayName;
+#>
+                case <#= name #>.<#= keyName #>:
+                    return "<#= displayName #>";
+<#
+        }
+#>
+            }
+            return "";
+        }
+<#
+        if (!isLastEnum) {
+#>
+
+<#
+        }
+#>
+<#
+    }
+#>    }
+
+    #endregion
+}

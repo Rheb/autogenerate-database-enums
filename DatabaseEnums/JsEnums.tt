@@ -1,0 +1,122 @@
+﻿<#@ template debug="true" hostSpecific="true" #>
+<#@ output extension="gen.js" #>
+<#@ include file="Core.include.tt" #><##>
+/*----------------------------------------------------------------------*/ /* eslint-disable */ /*
+ * This is an auto-generated js-file
+ * To update from db, use: npm run dblookup
+ * Available utility functions for lookupObjects are:
+ *   .getKeyName(id)
+ *   .getDisplayName(id)
+ *   .toList()
+ *----------------------------------------------------------------------------------------------*/
+
+<#
+    // Loop thorugh all tables to create enums
+    for (int i = 0; i < enumNames.Count; i++)
+    {
+        string name = enumNames[i];
+        TableHeaderInfo header = enumDict[name].HeaderInfo;
+        List<RowInfo> rows = enumDict[name].RowInfoList;
+#>
+// #region <#= name #> (Table: <#= header.TableName #>)
+
+export const <#= name #> = {
+<#
+        // Loop through all rows in this lookup table
+        for (int j = 0; j < rows.Count; j++)
+        {
+            string id = rows[j].ID;
+            string keyName = rows[j].KeyName;
+            string displayName = rows[j].DisplayName;
+#>  <#= keyName #>: <#= id #>, // <#= displayName #>
+<#
+        }
+#>  // Note: these template utility functions are overwritten with correct functionality
+  getKeyName: (id) => id.toString(),
+  getDisplayName: (id) => id.toString(),
+  toList: () => [],
+};
+
+// #endregion
+
+<#
+    }
+#>
+// #region LookupObejcts - Private Utilities
+
+<#
+    // Loop thorugh all tables to create utility data objects
+    for (int i = 0; i < enumNames.Count; i++)
+    {
+        string name = enumNames[i];
+        List<RowInfo> rows = enumDict[name].RowInfoList;
+#>
+const <#= name #>Utils = {
+<#
+        // Loop through all rows in this lookup table
+        for (int j = 0; j < rows.Count; j++)
+        {
+            string id = rows[j].ID;
+            string keyName = rows[j].KeyName;
+            string displayName = rows[j].DisplayName;
+#>
+  <#= id #>: {
+    keyName: '<#= keyName #>',
+    displayName: '<#= displayName #>',
+  },
+<#
+        }
+#>
+};
+<#
+    }
+#>
+
+// #endregion
+
+// #region LookupObejcts - Utility Function Overrides
+
+<#
+    // Loop thorugh all tables to create utility function overrides
+    for (int i = 0; i < enumNames.Count; i++)
+    {
+        bool isLastEnum = (i == enumNames.Count - 1);
+        string name = enumNames[i];
+        List<RowInfo> rows = enumDict[name].RowInfoList;
+
+        string toListConstStr = "["; 
+
+        for (int j = 0; j < rows.Count; j++)
+        {
+            bool isLastRow = j == rows.Count - 1;
+            string id = rows[j].ID;
+            
+            toListConstStr += id;
+            if (isLastRow)
+            {
+                toListConstStr += "]";
+            }
+            else
+            {
+                toListConstStr += ", ";
+            }
+        }
+#>
+const <#= name #>IDs = <#= toListConstStr #>;
+Object.defineProperty(<#= name #>, 'getKeyName', {
+  value: (id) => <#= name #>Utils[id].keyName,
+  writable: false,
+});
+Object.defineProperty(<#= name #>, 'getDisplayName', {
+  value: (id) => <#= name #>Utils[id].displayName,
+  writable: false,
+});
+Object.defineProperty(<#= name #>, 'toList', {
+  value: () => <#= name #>IDs,
+  writable: false,
+});<#= isLastEnum ? "" : "\r\n" #>
+<#
+    }
+#>
+
+// #endregion
