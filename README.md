@@ -19,7 +19,7 @@ __3. If using npm:__
   - Move the dblookup.bat file into the same folder as package.json
   - Remember to reset all relative paths of dblookup.bat
 
-__3. General Notes:__
+__4. General Notes:__
   - In dblookup.bat: %~dp0 = path to the folder of the dblookup.bat
   - Run dblookup.bat to execute the .tt files generation and copy the output files to your desired locations
   - Debuging of the .tt files is possible if opening them in Visual Studio
